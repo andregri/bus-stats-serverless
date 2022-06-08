@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  PostBusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_post_bus.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - AWSLambdaExecute
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BusTimeTable
+      Tags:
+        Key: "Owner"
+        Value: "Andrea"
+
+  BusTimeTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: "stop_code"
+        Type: String
+      TableName: "BusTimeTable"
+      Tags:
+        Key: "Owner"
+        Value: "Andrea"
