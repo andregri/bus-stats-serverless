@@ -1,6 +1,14 @@
 AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: stage
+      Tags:
+        Key: "Owner"
+        Value: "Andrea"
+
   PostBusFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -10,17 +18,38 @@ Resources:
         - AWSLambdaExecute
         - DynamoDBCrudPolicy:
             TableName: !Ref BusTimeTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /bustime
+            Method: post
+            RestApiId:
+              Ref: ApiGatewayApi
       Tags:
         Key: "Owner"
         Value: "Andrea"
 
   BusTimeTable:
-    Type: AWS::Serverless::SimpleTable
+    Type: AWS::DynamoDB::Table
     Properties:
-      PrimaryKey:
-        Name: "stop_code"
-        Type: String
-      TableName: "BusTimeTable"
+      AttributeDefinitions:
+        -
+          AttributeName: "stop_code"
+          AttributeType: "S"
+        -
+          AttributeName: "datetime"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: "stop_code"
+          KeyType: "HASH"
+        -
+          AttributeName: "datetime"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "1"
+        WriteCapacityUnits: "1"
       Tags:
-        Key: "Owner"
-        Value: "Andrea"
+        - Key: "Owner"
+          Value: "Andrea"
