@@ -26,6 +26,33 @@ Resources:
             Method: post
             RestApiId:
               Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BusTimeTable
+      Tags:
+        Key: "Owner"
+        Value: "Andrea"
+
+  GetBusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_get_bus.lambda_handler
+      Runtime: python3.9
+      Policies:
+        - AWSLambdaExecute
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BusTimeTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /bustime
+            Method: get
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref BusTimeTable
       Tags:
         Key: "Owner"
         Value: "Andrea"

@@ -1,5 +1,6 @@
 import logging
 import boto3
+import os
 
 dynamodb = boto3.client('dynamodb')
 
@@ -14,7 +15,7 @@ def lambda_handler(event, context):
 
     logger.info(f'{stop_code} {bus_line} {datetime}')
 
-    data = dynamodb.put_item(TableName='BusTimeTable',
+    data = dynamodb.put_item(TableName=os.environ['TABLE_NAME'],
                              Item={
                                 'stop_code': {'S': stop_code},
                                 'bus_line': {'S': bus_line},
